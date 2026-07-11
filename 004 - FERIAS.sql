@@ -1,5 +1,5 @@
 SELECT
-	'' AS [Código da Unidade, cfe. Tabela de Unidades],
+	LEFT(CAST(PFUNC.CODFILIAL AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
 	'' AS [Código do Contrato],
 	FORMAT(PFUFERIASPER.DATAFIM, 'ddMMyyyy') AS [Data de Término de Gozo das Férias],
 	FORMAT(PFUFERIAS.INICIOPERAQUIS, 'ddMMyyyy') AS [Data de Início do Período Aquisitivo],
