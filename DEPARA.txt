@@ -1,0 +1,5 @@
+Validar o De-para das tabelas abaixo.
+
+GCOLIGADA? ===================> cfe. Tabela de Empresas
+GFILIAL? =====================> cfe. Tabela de Unidades
+PSECAO? ======================> cfe. Tabela de Estabelecimentos
