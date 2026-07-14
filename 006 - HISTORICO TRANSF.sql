@@ -12,8 +12,10 @@ WITH CTE AS
     FROM PFHSTSEC
 )
 SELECT
-    LEFT(CAST(PFUNC.CODFILIAL AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
-    PFUNC.CHAPA AS [Código do Contrato],
+    LEFT(CAST(PFUNC.CODSECAO AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
+    LEFT(
+		RIGHT('00000000' + (CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CHAPA AS VARCHAR)), 8), 8
+	) AS [Código do Contrato],
     FORMAT(CTE.DTMUDANCA, 'ddMMyyyy') AS [Data da Transferência],
     CTE.CODSECAO AS [Código do Estabelecimento Origem, cfe. Tabela de Estabelecimentos],
     CTE.PROXIMA_SECAO AS [Código do Estabelecimento Destino, cfe. Tabela de Estabelecimentos]

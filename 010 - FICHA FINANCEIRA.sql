@@ -19,7 +19,9 @@ WITH EVT AS (
 
 SELECT
     LEFT(CAST(PFFINANC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
-    LEFT(CAST(PFUNC.CHAPA AS VARCHAR), 8) AS [Código do Contrato],
+    LEFT(
+		RIGHT('00000000' + (CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CHAPA AS VARCHAR)), 8), 8
+	) AS [Código do Contrato],
     FORMAT(EOMONTH(DATEFROMPARTS(PFFINANC.ANOCOMP, PFFINANC.MESCOMP, 1)), 'ddMMyyyy') AS [Data Base da Folha de Pagamento],
     '11' AS [Código da Folha de Pagamento],
     ( 

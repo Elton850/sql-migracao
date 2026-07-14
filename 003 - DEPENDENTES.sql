@@ -1,5 +1,5 @@
 SELECT
-    LEFT(CAST(PFDEPEND.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
+    PFDEPEND.CODCOLIGADA AS [Código da Empresa, cfe. Tabela de Empresas],
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa],
     RIGHT('00' + LEFT(CAST(PFDEPEND.NRODEPEND AS INTEGER), 2), 2) AS [Familiar (Número Sequencial), iniciando em “01” a cada Pessoa],
     LEFT(CAST(PFDEPEND.NOME AS VARCHAR), 40) AS [Nome do Familiar],

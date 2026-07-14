@@ -1,8 +1,10 @@
 SELECT
-    LEFT(CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
-    '' AS [Código do Estabelecimento Atual, cfe. Tabela de Estabelecimentos],
-    LEFT(CAST(PFUNC.CODFILIAL AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
-    '' AS [Código do Contrato],
+    PFUNC.CODCOLIGADA AS [Código da Empresa, cfe. Tabela de Empresas],
+    PFUNC.CODFILIAL AS [Código do Estabelecimento Atual, cfe. Tabela de Estabelecimentos],
+    PFUNC.CODSECAO AS [Código da Unidade, cfe. Tabela de Unidades],
+	LEFT(
+		RIGHT('00000000' + (CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CHAPA AS VARCHAR)), 8), 8
+	) AS [Código do Contrato],
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa, cfe. Tabela de Pessoas],
     CASE
         WHEN PFUNC.DATADEMISSAO BETWEEN DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND EOMONTH(GETDATE()) THEN '3'
