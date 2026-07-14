@@ -1,3 +1,21 @@
+WITH TB_CARGOS AS (
+    SELECT 
+	RIGHT(
+		'00000000' + CAST(ROW_NUMBER() OVER(ORDER BY CARGO) AS VARCHAR), 8
+	) AS CODIGO,
+	CARGOS.*
+FROM (	
+	SELECT DISTINCT
+		LEFT(TRANSLATE(
+			CAST(PFUNCAO.NOME AS VARCHAR),
+			'ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇáàâãäéèêëíìîïóòôõöúùûüç',
+			'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
+		), 40) AS CARGO,
+		LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6) AS CBO
+	FROM PFUNCAO
+    ) CARGOS
+)
+
 SELECT
     PFUNC.CODCOLIGADA AS [Código da Empresa, cfe. Tabela de Empresas],
     PFUNC.CODFILIAL AS [Código do Estabelecimento Atual, cfe. Tabela de Estabelecimentos],
@@ -37,7 +55,7 @@ SELECT
     '' AS [Data de Término da Prorrogação do Contrato de Experiência],
     '' AS [Número de Dias da Prorrogação do Contrato de Experiência],
     FORMAT(PFUNC.DATADEMISSAO, 'ddMMyyyy') AS [Data da Rescisão],
-    LEFT(CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CODFUNCAO AS VARCHAR), 8) AS [Código do Cargo, cfe. Tabela de Cargos],
+    TB_CARGOS.CODIGO AS [Código do Cargo, cfe. Tabela de Cargos],
     LEFT(CAST(PFUNC.MATRICULAESOCIAL AS VARCHAR), 30) AS [Matrícula para o eSocial],
     2 AS [Tipo de Contrato],
     CASE
@@ -60,3 +78,12 @@ SELECT
     '001' AS [Vínculo Empregatício],
     '1' AS [Tipo de Admissão para o eSocial]
 FROM PFUNC
+LEFT JOIN PFUNCAO
+  ON PFUNCAO.CODCOLIGADA            = PFUNC.CODCOLIGADA
+  AND PFUNCAO.CODIGO                = PFUNC.CODFUNCAO
+LEFT JOIN TB_CARGOS
+  ON TB_CARGOS.CARGO                = LEFT(TRANSLATE(CAST(PFUNCAO.NOME AS VARCHAR),
+			                            'ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇáàâãäéèêëíìîïóòôõöúùûüç',
+			                            'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
+		                            ), 40)
+  AND TB_CARGOS.CBO                 = LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6)

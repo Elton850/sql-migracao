@@ -1,3 +1,21 @@
+WITH TB_CARGOS AS (
+  SELECT 
+  RIGHT(
+    '00000000' + CAST(ROW_NUMBER() OVER(ORDER BY CARGO) AS VARCHAR), 8
+  ) AS CODIGO,
+  CARGOS.*
+FROM (	
+	SELECT DISTINCT
+		LEFT(TRANSLATE(
+			CAST(PFUNCAO.NOME AS VARCHAR),
+			'ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇáàâãäéèêëíìîïóòôõöúùûüç',
+			'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
+		), 40) AS CARGO,
+		LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6) AS CBO
+	FROM PFUNCAO
+    ) CARGOS
+)
+
 SELECT
     PFUNC.CODSECAO AS [Código da Unidade, cfe. Tabela de Unidades],
     LEFT(
@@ -13,7 +31,7 @@ SELECT
     END AS [Tipo de Salário],
     LEFT(REPLACE(PFUNC.SALARIO,'.',','), 11) AS [Salário Contratual, cfe. Tipo de Salário],
     LEFT(CAST(PFUNC.JORNADA AS INTEGER), 5) AS [Horas Contratuais, cfe. Tipo de Salário. Informar Horas/Mês nos contratos de horistas (tipo de salário “5”).],
-    LEFT(CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CODFUNCAO AS VARCHAR),8) AS [Código do Cargo, cfe. Tabela de Cargos],
+    TB_CARGOS.CODIGO AS [Código do Cargo, cfe. Tabela de Cargos],
     '' AS [Motivo de Alteração Salarial, cfe. Tabela de Motivos de Reajustes Salariais],
     CASE
         WHEN PFUNC.CODRECEBIMENTO LIKE 'M' THEN '1' --1 – Mensal
@@ -24,8 +42,18 @@ SELECT
     END AS [Tipo de Salário Anterior (Se não houve alteração repita a informação atual)],
     LEFT(CAST(PFHSTSAL.SALARIO AS INTEGER), 11) AS [Salário Contratual Anterior (Se não houve alteração repita a informação atual) ],
     LEFT(CAST(PFHSTSAL.JORNADA AS INTEGER), 5) AS [Horas Contatuais Anterior (Se não houve alteração repita a informação atual) ],
-    ISNULL(LEFT(CAST(PFHSTFCO.CODCOLIGADA AS VARCHAR) + CAST(PFHSTFCO.CODFUNCAO AS VARCHAR), 8),
-    	LEFT(CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CODFUNCAO AS VARCHAR), 8)
+    ISNULL(
+      ( SELECT TOP 1 CODIGO
+        FROM TB_CARGOS
+        WHERE CARGO = (SELECT TOP 1 
+        TRANSLATE(
+          NOME, 
+          'ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇáàâãäéèêëíìîïóòôõöúùûüç',
+          'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
+        )
+        FROM PFUNCAO WHERE CODIGO = PFHSTFCO.CODFUNCAO)
+      ),
+    	TB_CARGOS.CODIGO
     ) AS [Código Antigo de Cargo. (Se não houve alteração repita o cargo atual) ]
 FROM PFHSTSAL
 LEFT JOIN PFUNC
@@ -36,4 +64,13 @@ LEFT JOIN PFHSTFCO
   AND PFHSTFCO.CHAPA        = PFHSTSAL.CHAPA
   AND PFHSTFCO.DTMUDANCA    = PFHSTSAL.DTMUDANCA
   AND PFHSTFCO.MOTIVO NOT LIKE '01'
+LEFT JOIN PFUNCAO
+  ON PFUNCAO.CODCOLIGADA            = PFUNC.CODCOLIGADA
+  AND PFUNCAO.CODIGO                = PFUNC.CODFUNCAO
+LEFT JOIN TB_CARGOS
+  ON TB_CARGOS.CARGO                = LEFT(TRANSLATE(CAST(PFUNCAO.NOME AS VARCHAR),
+			                            'ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇáàâãäéèêëíìîïóòôõöúùûüç',
+			                            'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
+		                            ), 40)
+  AND TB_CARGOS.CBO                 = LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6)
 WHERE PFHSTSAL.MOTIVO NOT LIKE '01'
