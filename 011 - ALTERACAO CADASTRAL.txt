@@ -1,0 +1,29 @@
+WITH TB_UNIDADE AS (
+	SELECT
+		RIGHT('0000' + CAST(ROW_NUMBER() OVER(ORDER BY CODIGO) AS VARCHAR), 4) AS CODSEQ,
+		SECAO.*
+	FROM (
+	SELECT DISTINCT
+		CAST(CODCOLIGADA AS VARCHAR) + CAST(REPLACE(CODIGO,'.','') AS VARCHAR) AS CODIGO,
+		DESCRICAO
+	FROM PSECAO
+	) SECAO
+)
+
+SELECT
+    TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
+	CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
+    FORMAT(PFUNC.DTTRANSFERENCIA, 'ddMMyyyy') AS [Data da Alteração],
+    'CCON' AS [Variável], --CCON – Código do Contrato
+    'CCON' AS [Novo Código, cfe. Variável acima],
+    CAST(
+        PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))
+    ) AS [Novo Conteúdo. Descrição do Novo Código na época da alteração. Caso não seja informada, será gravada a atual.],
+    'CCON' AS [Código Antigo, cfe. Variável acima. OBS. Campo obrigatório nas conversões para o Darwin.],
+    CAST(
+        PFUNC.COLIGADAANTERIORTRANSF AS VARCHAR) + RIGHT(PFUNC.CHAPAANTERIORTRANSF, 8 - LEN(CAST(PFUNC.COLIGADAANTERIORTRANSF AS VARCHAR))
+    ) AS [Conteúdo Antigo. Descrição do Código Antigo na época da alteração]
+FROM PFUNC
+LEFT JOIN TB_UNIDADE
+  ON TB_UNIDADE.CODIGO			    = CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(PFUNC.CODSECAO,'.','') AS VARCHAR)
+WHERE PFUNC.CHAPAANTERIORTRANSF IS NOT NULL
