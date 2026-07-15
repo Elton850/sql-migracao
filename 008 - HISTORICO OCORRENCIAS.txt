@@ -2,9 +2,7 @@ SELECT *
 FROM (
     SELECT
         RIGHT('0000' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
-        LEFT(
-            RIGHT('00000000' + (CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CHAPA AS VARCHAR)), 8), 8
-        ) AS [Código do Contrato],
+        CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
         FORMAT(PFHSTAFT.DTINICIO, 'ddMMyyyy') AS [Data de Início da Ocorrência],
         CASE
             WHEN PFHSTAFT.MOTIVO IN ('03')                  THEN '004' --004 – Licença Maternidade – Intervalo de datas
