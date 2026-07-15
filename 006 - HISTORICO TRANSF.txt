@@ -10,15 +10,31 @@ WITH CTE AS
             ORDER BY DTMUDANCA
         ) AS PROXIMA_SECAO
     FROM PFHSTSEC
+),
+TB_UNIDADE AS (
+	SELECT
+		RIGHT('0000' + ROW_NUMBER() OVER(ORDER BY CODIGO)) AS CODSEQ,
+		SECAO.*
+	FROM (
+	SELECT DISTINCT
+		CAST(CODCOLIGADA AS VARCHAR) + CAST(REPLACE(CODIGO,'.','') AS VARCHAR) AS CODIGO,
+		DESCRICAO
+	FROM PSECAO
+	) SECAO
 )
+
 SELECT
-    RIGHT('0000' + CAST(PFUNC.CODSECAO AS VARCHAR), 4) AS [Código da Unidade, cfe. Tabela de Unidades],
+    TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
     LEFT(
 		RIGHT('00000000' + (CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(PFUNC.CHAPA AS VARCHAR)), 8), 8
 	) AS [Código do Contrato],
     FORMAT(CTE.DTMUDANCA, 'ddMMyyyy') AS [Data da Transferência],
-    CTE.CODSECAO AS [Código do Estabelecimento Origem, cfe. Tabela de Estabelecimentos],
-    CTE.PROXIMA_SECAO AS [Código do Estabelecimento Destino, cfe. Tabela de Estabelecimentos]
+    (
+      SELECT TOP 1 CODSEQ FROM TB_UNIDADE WHERE CODIGO = CAST(CTE.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(CTE.CODSECAO,'.','') AS VARCHAR)
+    ) AS [Código do Estabelecimento Origem, cfe. Tabela de Estabelecimentos],
+    (
+      SELECT TOP 1 CODSEQ FROM TB_UNIDADE WHERE CODIGO = CAST(CTE.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(CTE.PROXIMA_SECAO,'.','') AS VARCHAR)
+    ) AS [Código do Estabelecimento Destino, cfe. Tabela de Estabelecimentos]
 FROM CTE
 LEFT JOIN PFUNC
   ON PFUNC.CODCOLIGADA              = CTE.CODCOLIGADA
