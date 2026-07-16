@@ -33,12 +33,18 @@ SELECT
    	TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
 	CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa, cfe. Tabela de Pessoas],
+    '' AS [Interno Sistema],
+    '' AS [Interno Sistema],
     CASE
         WHEN PFUNC.DATADEMISSAO BETWEEN DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND EOMONTH(GETDATE()) THEN '3'
         WHEN PFUNC.DATADEMISSAO < DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) THEN '4'
         WHEN PFUNC.CODSITUACAO IN ('E','L','P','T','W','Y','I') THEN '2'
         WHEN PFUNC.CODSITUACAO IN ('A', 'Z') THEN '1'
     END AS [Situação],
+    '' AS [Interno Sistema],
+    '' AS [Interno Sistema],
+    '' AS [Interno Sistema],
+    '' AS [Interno Sistema],
     FORMAT(PFUNC.DATAADMISSAO, 'ddMMyyyy') AS [Data de Admissão],
     CASE
         WHEN PFUNC.CODRECEBIMENTO LIKE 'M' THEN '1'
@@ -56,13 +62,17 @@ SELECT
     RIGHT('0000' + LEFT(CAST(REPLACE(REPLACE(PFUNC.CODAGENCIAPAGTO, '-',''),' ','') AS INTEGER), 4), 4) AS [Agencia Bancária do Funcionário],
     RIGHT(REPLACE(REPLACE(PFUNC.CODAGENCIAPAGTO, '-',''),' ',''), 1) AS [Dígito da Agência Bancária do Funcionário],
     LEFT(TRY_CAST(REPLACE(REPLACE(REPLACE(PFUNC.CONTAPAGAMENTO, '-',''),' ',''), '.','') AS INTEGER), 15) AS [Número/Dígito da Conta Corrente],
+    '' AS [Interno Sistema],
     '' AS [Cadastro do Empregado na CEF (para o FGTS)],
+    '' AS [Interno Sistema],
     FORMAT(PFUNC.DATAADMISSAO, 'ddMMyyyy') AS [Data de Início do Contrato de Experiência/Temporário],
     FORMAT(PFUNC.FIMPRAZOCONTR, 'ddMMyyyy') AS [Data de Término do Contrato de Experiência/Temporário],
     '' AS [Número de Dias do Contrato de Experiência/Temporário],
     '' AS [Data de Início da Prorrogação do Contrato de Experiência],
     '' AS [Data de Término da Prorrogação do Contrato de Experiência],
     '' AS [Número de Dias da Prorrogação do Contrato de Experiência],
+    '' AS [Interno Sistema],
+    '' AS [Interno Sistema],
     FORMAT(PFUNC.DATADEMISSAO, 'ddMMyyyy') AS [Data da Rescisão],
     TB_CARGOS.CODIGO AS [Código do Cargo, cfe. Tabela de Cargos],
     LEFT(CAST(PFUNC.MATRICULAESOCIAL AS VARCHAR), 30) AS [Matrícula para o eSocial],
