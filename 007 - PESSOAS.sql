@@ -20,14 +20,14 @@ SELECT DISTINCT
         THEN (SELECT TOP 1 NOME FROM DEPENDENTES WHERE CODCOLIGADA = PFUNC.CODCOLIGADA AND CHAPA = PFUNC.CHAPA AND GRAUPARENTESCO = '7')
         ELSE 'NAO DECLARADO'
     END, 40) AS [Nome da Mãe],
-    FORMAT(PPESSOA.DTNASCIMENTO, 'ddMMyyyy') AS [Data de Nascimento],
+    FORMAT(PPESSOA.DTNASCIMENTO, 'dd/MM/yyyy') AS [Data de Nascimento],
     UPPER(LEFT(CAST(PPESSOA.CIDADE AS VARCHAR), 20)) AS [Local do Nascimento],
     UPPER(LEFT(CAST(PPESSOA.ESTADO AS VARCHAR), 2)) AS [UF do Nascimento],
     LEFT(CAST(PPESSOA.SEXO AS VARCHAR), 1) AS [Sexo],
     CASE
         WHEN PPESSOA.CORRACA IN ('0')               THEN '1' --1 – Indígena
         WHEN PPESSOA.CORRACA IN ('2')               THEN '2' --2 – Branca
-        WHEN PPESSOA.CORRACA IN ('4')               THEN '3' --4 – Preta
+        WHEN PPESSOA.CORRACA IN ('4')               THEN '4' --4 – Preta
         WHEN PPESSOA.CORRACA IN ('6')               THEN '6' --6 – Amarela
         WHEN PPESSOA.CORRACA IN ('8')               THEN '8' --8 – Parda
         WHEN PPESSOA.CORRACA IN ('9', '10')         THEN '9' --9 - Não Informada
@@ -63,7 +63,7 @@ SELECT DISTINCT
     '' AS [Data do Cadastramento do PIS],
     LEFT(CAST(PPESSOA.CPF AS VARCHAR), 11) AS [CPF],
     LEFT(CAST(PPESSOA.CARTIDENTIDADE AS VARCHAR), 15) AS [Identidade (RE ou RG)],
-    FORMAT(PPESSOA.DTEMISSAOIDENT, 'ddMMyyyy') AS [Data da Emissão da Identidade],
+    FORMAT(PPESSOA.DTEMISSAOIDENT, 'dd/MM/yyyy') AS [Data da Emissão da Identidade],
     LEFT(CAST(PPESSOA.ORGEMISSORIDENT AS VARCHAR), 8) AS [Órgão Emissor da Identidade],
     LEFT(CAST(PPESSOA.UFCARTIDENT AS VARCHAR), 2) AS [UF da Identidade],
     LEFT(CAST(PPESSOA.TITULOELEITOR AS VARCHAR), 15) AS [Título Eleitoral],
@@ -98,7 +98,7 @@ SELECT DISTINCT
     LEFT(CAST(PPESSOA.CERTIFRESERV AS VARCHAR), 20) AS [Certificado de Reservista],
     LEFT(CAST(PPESSOA.CARTMOTORISTA AS VARCHAR), 15) AS [Registro da Carteira de Habilitação],
     LEFT(CAST(PPESSOA.TIPOCARTHABILIT AS VARCHAR), 3) AS [Categoria da Carteira de Habilitação],
-    FORMAT(PPESSOA.DTVENCHABILIT, 'ddMMyyyy') AS [Data de Validade da Carteira de Habilitação],
+    FORMAT(PPESSOA.DTVENCHABILIT, 'dd/MM/yyyy') AS [Data de Validade da Carteira de Habilitação],
     LEFT(CAST(PPESSOA.ORGEMISSORCNH AS VARCHAR), 20) AS [Órgão Emissor da Carteira de Habilitação],
     LEFT(CAST(PPESSOA.UFCNH AS VARCHAR), 2) AS [UF da Carteira de Habilitação],
     LEFT(CAST(PFUNC.NUMEROCARTAOSUS AS VARCHAR), 20) AS [Número do Cartão do SUS],
@@ -107,10 +107,10 @@ SELECT DISTINCT
     '' AS [Órgão Emissor do Registro de Identidade Civil (RIC)],
     LEFT(CAST(PPESSOA.CARTEIRATRAB AS VARCHAR), 10) AS [Número da Carteira de Trabalho],
     LEFT(CAST(PPESSOA.SERIECARTTRAB AS VARCHAR), 5) AS [Série da Carteira de Trabalho],
-    FORMAT(PPESSOA.DTCARTTRAB, 'ddMMyyyy') AS [Data de Emissão da Carteira de Trabalho],
+    FORMAT(PPESSOA.DTCARTTRAB, 'dd/MM/yyyy') AS [Data de Emissão da Carteira de Trabalho],
     LEFT(CAST(PPESSOA.UFCARTTRAB AS VARCHAR), 2) AS [UF da Carteira de Trabalho],
     LEFT(CAST(PPESSOA.NOME AS VARCHAR), 70) AS [Nome Completo],
-    FORMAT(PPESSOA.DTEMISSAOCNH, 'ddMMyyyy') AS [Data de Expedição da Carteira de Habilitação]
+    FORMAT(PPESSOA.DTEMISSAOCNH, 'dd/MM/yyyy') AS [Data de Expedição da Carteira de Habilitação]
 FROM PPESSOA
-LEFT JOIN PFUNC
+INNER JOIN PFUNC
   ON PFUNC.CODPESSOA                = PPESSOA.CODIGO

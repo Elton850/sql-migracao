@@ -13,7 +13,7 @@ WITH TB_UNIDADE AS (
 SELECT
     TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
 	CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-    FORMAT(PFUNC.DTTRANSFERENCIA, 'ddMMyyyy') AS [Data da Alteração],
+    FORMAT(PFUNC.DTTRANSFERENCIA, 'dd/MM/yyyy') AS [Data da Alteração],
     'CCON' AS [Variável], --CCON – Código do Contrato
     'CCON' AS [Novo Código, cfe. Variável acima],
     CAST(

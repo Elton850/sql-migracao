@@ -32,13 +32,13 @@ TB_UNIDADE AS (
 SELECT
     TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
     CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-    FORMAT(EOMONTH(DATEFROMPARTS(PFFINANC.ANOCOMP, PFFINANC.MESCOMP, 1)), 'ddMMyyyy') AS [Data Base da Folha de Pagamento],
+    FORMAT(EOMONTH(DATEFROMPARTS(PFFINANC.ANOCOMP, PFFINANC.MESCOMP, 1)), 'dd/MM/yyyy') AS [Data Base da Folha de Pagamento],
     '11' AS [Código da Folha de Pagamento],
     ( 
         SELECT TOP 1 [Código do Vencimento, Desconto ou Base Metadados (Destino)] FROM EVT 
         WHERE EVT.[Código do Vencimento, Desconto ou Base do sistema de Origem] = PFFINANC.CODEVENTO
     ) AS [Código do VDB],
-    FORMAT(PFFINANC.DTPAGTO, 'ddMMyyyy') AS [Data de Pagamento da Folha de Pagamento],
+    FORMAT(PFFINANC.DTPAGTO, 'dd/MM/yyyy') AS [Data de Pagamento da Folha de Pagamento],
     '0' AS [Tipo de Informação],
     '0' AS [Horas, Dias ou Quantidade, cfe. Tipo de Informação],
     LEFT(CAST(PFFINANC.VALOR AS DECIMAL(15,2)), 15) AS [Valor],

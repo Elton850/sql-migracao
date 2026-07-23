@@ -13,10 +13,10 @@ WITH TB_UNIDADE AS (
 SELECT
 	TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
 	CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-	FORMAT(PFUFERIASPER.DATAFIM, 'ddMMyyyy') AS [Data de Término de Gozo das Férias],
-	FORMAT(PFUFERIAS.INICIOPERAQUIS, 'ddMMyyyy') AS [Data de Início do Período Aquisitivo],
-	FORMAT(PFUFERIASPER.DATAINICIO, 'ddMMyyyy') AS [Data de Início de Gozo das Férias],
-	FORMAT(PFUFERIAS.FIMPERAQUIS, 'ddMMyyyy') AS [Data de Término do Período Aquisitivo],
+	FORMAT(PFUFERIASPER.DATAFIM, 'dd/MM/yyyy') AS [Data de Término de Gozo das Férias],
+	FORMAT(PFUFERIAS.INICIOPERAQUIS, 'dd/MM/yyyy') AS [Data de Início do Período Aquisitivo],
+	FORMAT(PFUFERIASPER.DATAINICIO, 'dd/MM/yyyy') AS [Data de Início de Gozo das Férias],
+	FORMAT(PFUFERIAS.FIMPERAQUIS, 'dd/MM/yyyy') AS [Data de Término do Período Aquisitivo],
 	LEFT(CAST(PFUFERIASPER.NRODIASFERIAS AS DECIMAL(10,2)), 4) AS [Dias de Férias Cedidos],
 	LEFT(CAST(PFUFERIASPER.NRODIASABONO AS DECIMAL(10,2)), 4) AS [Dias de Abono Cedidos]
 FROM PFUFERIASPER

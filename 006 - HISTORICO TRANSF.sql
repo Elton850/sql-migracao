@@ -26,7 +26,7 @@ TB_UNIDADE AS (
 SELECT
     TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
     CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-    FORMAT(CTE.DTMUDANCA, 'ddMMyyyy') AS [Data da Transferência],
+    FORMAT(CTE.DTMUDANCA, 'dd/MM/yyyy') AS [Data da Transferência],
     (
       SELECT TOP 1 CODSEQ FROM TB_UNIDADE WHERE CODIGO = CAST(CTE.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(CTE.CODSECAO,'.','') AS VARCHAR)
     ) AS [Código do Estabelecimento Origem, cfe. Tabela de Estabelecimentos],

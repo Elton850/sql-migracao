@@ -3,7 +3,7 @@ SELECT
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa],
     RIGHT('00' + LEFT(CAST(PFDEPEND.NRODEPEND AS INTEGER), 2), 2) AS [Familiar (Número Sequencial), iniciando em “01” a cada Pessoa],
     LEFT(CAST(PFDEPEND.NOME AS VARCHAR), 40) AS [Nome do Familiar],
-    FORMAT(PFDEPEND.DTNASCIMENTO, 'ddMMyyyy') AS [Data de Nascimento],
+    FORMAT(PFDEPEND.DTNASCIMENTO, 'dd/MM/yyyy') AS [Data de Nascimento],
     '' AS [Local de Nascimento],
     '' AS [UF do Nascimento],
     LEFT(CAST(PFDEPEND.SEXO AS VARCHAR), 1) AS [Sexo],
@@ -40,6 +40,6 @@ SELECT
     '' AS [Número do Cartão do SUS],
     '' AS [Nome Completo do Familiar]
 FROM PFDEPEND
-LEFT JOIN PFUNC
+INNER JOIN PFUNC
 ON PFUNC.CODCOLIGADA      = PFDEPEND.CODCOLIGADA
 AND PFUNC.CHAPA           = PFDEPEND.CHAPA

@@ -30,7 +30,7 @@ TB_UNIDADE AS (
 SELECT
     TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
     CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-    FORMAT(PFHSTSAL.DTMUDANCA, 'ddMMyyyy') AS [Data da Alteração],
+    FORMAT(PFHSTSAL.DTMUDANCA, 'dd/MM/yyyy') AS [Data da Alteração],
     CASE
         WHEN PFUNC.CODRECEBIMENTO LIKE 'M' THEN '1' --1 – Mensal
         WHEN PFUNC.CODRECEBIMENTO LIKE 'Q' THEN '2' --2 – Por Quinzena

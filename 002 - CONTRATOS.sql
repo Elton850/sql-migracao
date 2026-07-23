@@ -45,7 +45,7 @@ SELECT
     '' AS [Interno Sistema],
     '' AS [Interno Sistema],
     '' AS [Interno Sistema],
-    FORMAT(PFUNC.DATAADMISSAO, 'ddMMyyyy') AS [Data de Admissão],
+    FORMAT(PFUNC.DATAADMISSAO, 'dd/MM/yyyy') AS [Data de Admissão],
     CASE
         WHEN PFUNC.CODRECEBIMENTO LIKE 'M' THEN '1'
         WHEN PFUNC.CODRECEBIMENTO LIKE 'D' THEN '4'
@@ -65,15 +65,15 @@ SELECT
     '' AS [Interno Sistema],
     '' AS [Cadastro do Empregado na CEF (para o FGTS)],
     '' AS [Interno Sistema],
-    FORMAT(PFUNC.DATAADMISSAO, 'ddMMyyyy') AS [Data de Início do Contrato de Experiência/Temporário],
-    FORMAT(PFUNC.FIMPRAZOCONTR, 'ddMMyyyy') AS [Data de Término do Contrato de Experiência/Temporário],
+    FORMAT(PFUNC.DATAADMISSAO, 'dd/MM/yyyy') AS [Data de Início do Contrato de Experiência/Temporário],
+    FORMAT(PFUNC.FIMPRAZOCONTR, 'dd/MM/yyyy') AS [Data de Término do Contrato de Experiência/Temporário],
     '' AS [Número de Dias do Contrato de Experiência/Temporário],
     '' AS [Data de Início da Prorrogação do Contrato de Experiência],
     '' AS [Data de Término da Prorrogação do Contrato de Experiência],
     '' AS [Número de Dias da Prorrogação do Contrato de Experiência],
     '' AS [Interno Sistema],
     '' AS [Interno Sistema],
-    FORMAT(PFUNC.DATADEMISSAO, 'ddMMyyyy') AS [Data da Rescisão],
+    FORMAT(PFUNC.DATADEMISSAO, 'dd/MM/yyyy') AS [Data da Rescisão],
     TB_CARGOS.CODIGO AS [Código do Cargo, cfe. Tabela de Cargos],
     LEFT(CAST(PFUNC.MATRICULAESOCIAL AS VARCHAR), 30) AS [Matrícula para o eSocial],
     CASE

@@ -3,7 +3,7 @@ FROM (
     SELECT
         RIGHT('0000' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
         CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
-        FORMAT(PFHSTAFT.DTINICIO, 'ddMMyyyy') AS [Data de Início da Ocorrência],
+        FORMAT(PFHSTAFT.DTINICIO, 'dd/MM/yyyy') AS [Data de Início da Ocorrência],
         CASE
             WHEN PFHSTAFT.MOTIVO IN ('03')                  THEN '004' --004 – Licença Maternidade – Intervalo de datas
             WHEN PFHSTAFT.MOTIVO IN ('05','06','14')        THEN '012' --012 - Acidente de Trabalho Típico – Intervalo de datas
@@ -11,7 +11,7 @@ FROM (
             WHEN PFHSTAFT.MOTIVO IN ('02','17','25')        THEN '022' --022 – Doença não Relacionada ao Trabalho – Intervalo de Datas
             WHEN PFHSTAFT.MOTIVO IN ('21')                  THEN '032' --032 – Serviço Militar – Intervalo de datas
         END AS [Ocorrência],
-        FORMAT(PFHSTAFT.DTFINAL, 'ddMMyyyy') AS [Data de Término da Ocorrência],
+        FORMAT(PFHSTAFT.DTFINAL, 'dd/MM/yyyy') AS [Data de Término da Ocorrência],
         '' AS [Horas da ocorrência quando for somente um dia],
         LEFT(CAST(PFHSTAFT.OBSERVAÇÃO AS VARCHAR), 1000) AS [Texto da Ocorrência]
     FROM PFHSTAFT
