@@ -49,11 +49,15 @@ END AS [Grau de Dependência],
     '' AS [Data da Entrega da Certidão de Nascimento],
     '' AS [Data da Baixa da Certidão de Nascimento],
     '' AS [Estado Civil],
-    CASE
-        WHEN PFDEPEND.CPF IS NULL   THEN ''
-        WHEN PFDEPEND.CPF = ''      THEN ''
-        ELSE FORMAT(PFDEPEND.CPF, '00000000000') 
-    END AS [CPF],
+        CASE
+            WHEN PFDEPEND.CPF IS NULL
+                OR LTRIM(RTRIM(PFDEPEND.CPF)) = ''
+            THEN ''
+            ELSE RIGHT(
+                '00000000000' + LTRIM(RTRIM(PFDEPEND.CPF)),
+                11
+            )
+        END AS [CPF],
     '' AS [Grau de Instrução],
     '' AS [Número do Cartão do SUS],
     '' AS [Nome Completo do Familiar]
