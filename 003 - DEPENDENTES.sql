@@ -38,7 +38,11 @@ SELECT
     '' AS [Data da Entrega da Certidão de Nascimento],
     '' AS [Data da Baixa da Certidão de Nascimento],
     '' AS [Estado Civil],
-    '' AS [CPF],
+    CASE
+        WHEN PFDEPEND.CPF IS NULL   THEN ''
+        WHEN PFDEPEND.CPF = ''      THEN ''
+        ELSE FORMAT(PFDEPEND.CPF, '00000000000') 
+    END AS [CPF],
     '' AS [Grau de Instrução],
     '' AS [Número do Cartão do SUS],
     '' AS [Nome Completo do Familiar]
