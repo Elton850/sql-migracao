@@ -54,7 +54,10 @@ SELECT
         WHEN PFUNC.CODRECEBIMENTO LIKE 'Q' THEN '2'
     END AS [Tipo de Salário],
     LEFT(CAST(PFUNC.SALARIO AS VARCHAR), 11) AS [Salário Contratual, cfe. Tipo de Salário],
-    LEFT(CAST(PFUNC.JORNADA_MENSAL AS VARCHAR), 11) AS [Horas Contratuais, cfe. Tipo de Salário. Informar Horas/Mês nos contratos de Horistas (Tipo de Salário “5”).],
+    CASE
+        WHEN PFUNC.CODRECEBIMENTO = 'H' THEN '5' 
+        ELSE LEFT(CAST(PFUNC.JORNADA_MENSAL AS VARCHAR), 11) 
+    END AS [Horas Contratuais, cfe. Tipo de Salário. Informar Horas/Mês nos contratos de Horistas (Tipo de Salário “5”).],
     '' AS [Percentual de Insalubridade],
     '' AS [Percentual de Periculosidade],
     '' AS [Nível de Exposição a Agente Nocivo],
