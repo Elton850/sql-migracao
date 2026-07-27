@@ -56,7 +56,7 @@ SELECT
     LEFT(CAST(PFUNC.SALARIO AS VARCHAR), 11) AS [Salário Contratual, cfe. Tipo de Salário],
     CASE
         WHEN PFUNC.CODRECEBIMENTO = 'H' THEN '5' 
-        ELSE LEFT(CAST(PFUNC.JORNADA_MENSAL AS VARCHAR), 11) 
+        ELSE LEFT(CAST(PFUNC.JORNADAMENSAL / 60 AS VARCHAR), 11) 
     END AS [Horas Contratuais, cfe. Tipo de Salário. Informar Horas/Mês nos contratos de Horistas (Tipo de Salário “5”).],
     '' AS [Percentual de Insalubridade],
     '' AS [Percentual de Periculosidade],
