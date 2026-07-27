@@ -18,7 +18,10 @@ SELECT
         WHEN PFDEPEND.GRAUPARENTESCO IN ('I')                   THEN 'A' --A – Irmão(ã)
         WHEN PFDEPEND.GRAUPARENTESCO IN ('T')                   THEN '2' --2 – Neto(a)
     END AS [Grau de Parentesco],
-    '0' AS [Grau de Dependência],
+    CASE
+        WHEN DATEDIFF(YEAR, PFDEPEND.DTNASCIMENTO, GETDATE()) <= 21 THEN 1  --Menor de 21 anos
+        ELSE 0                                                              --Nenhuma Dependência
+    END AS [Grau de Dependência],
     CASE
         WHEN PFDEPEND.INCSALFAM = 1 THEN 'S'
         ELSE 'N'
