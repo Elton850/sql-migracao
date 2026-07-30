@@ -15,7 +15,7 @@ SELECT DISTINCT
         WHEN PFDEPEND.GRAUPARENTESCO IN ('9','C','G','P','S')   THEN '9' --9 – Outro Parentesco
         WHEN PFDEPEND.GRAUPARENTESCO IN ('A')                   THEN '6' --6 – Avô ou Avó
         WHEN PFDEPEND.GRAUPARENTESCO IN ('E')                   THEN '0' --0 – Nenhum Parentesco
-        WHEN PFDEPEND.GRAUPARENTESCO IN ('I')                      THEN 'A' --A – Irmão(ã)
+        WHEN PFDEPEND.GRAUPARENTESCO IN ('I')                   THEN 'A' --A – Irmão(ã)
         WHEN PFDEPEND.GRAUPARENTESCO IN ('T')                   THEN '2' --2 – Neto(a)
     END AS [Grau de Parentesco],
  CASE
