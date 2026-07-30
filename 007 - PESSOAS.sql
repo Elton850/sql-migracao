@@ -91,7 +91,7 @@ SELECT DISTINCT
     LEFT(CAST(PPESSOA.TITULOELEITOR AS VARCHAR), 15) AS [Título Eleitoral],
     LEFT(CAST(PPESSOA.ZONATITELEITOR AS VARCHAR), 4) AS [Zona Eleitoral],
     LEFT(CAST(PPESSOA.SECAOTITELEITOR AS VARCHAR), 4) AS [Seção Eleitoral],
-    '' AS [Aposentado],
+    CASE WHEN PFUNC.CODSITUACAO IN ('I') THEN 1 ELSE 0 END AS [Aposentado],
     '' AS [Data da Aposentadoria],
     CASE
         WHEN PPESSOA.ESTADOCIVIL IN ('E','O','S')       THEN '01' --01 – Solteiro
