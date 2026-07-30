@@ -1,4 +1,4 @@
-SELECT
+SELECT DISTINCT
     RIGHT('0000' + CAST(PFDEPEND.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa],
     RIGHT('00' + LEFT(CAST(PFDEPEND.NRODEPEND AS INTEGER), 2), 2) AS [Familiar (Número Sequencial), iniciando em “01” a cada Pessoa],
@@ -15,7 +15,7 @@ SELECT
         WHEN PFDEPEND.GRAUPARENTESCO IN ('9','C','G','P','S')   THEN '9' --9 – Outro Parentesco
         WHEN PFDEPEND.GRAUPARENTESCO IN ('A')                   THEN '6' --6 – Avô ou Avó
         WHEN PFDEPEND.GRAUPARENTESCO IN ('E')                   THEN '0' --0 – Nenhum Parentesco
-        WHEN PFDEPEND.GRAUPARENTESCO IN ('I')                   THEN 'A' --A – Irmão(ã)
+        WHEN PFDEPEND.GRAUPARENTESCO IN ('I')                      THEN 'A' --A – Irmão(ã)
         WHEN PFDEPEND.GRAUPARENTESCO IN ('T')                   THEN '2' --2 – Neto(a)
     END AS [Grau de Parentesco],
  CASE
@@ -67,3 +67,4 @@ INNER JOIN PFUNC
   AND PFUNC.CHAPA           = PFDEPEND.CHAPA
 INNER JOIN PPESSOA
   ON PFUNC.CODPESSOA        = PPESSOA.CODIGO
+WHERE PFDEPEND.NOME IS NOT NULL
