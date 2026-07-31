@@ -54,6 +54,7 @@ SELECT
         WHEN PFUNC.CODCATEGORIAESOCIAL = 734 THEN '205' --Freteiro Cooperado - Presta Serviço Entidade Beneficente, categoria e-Social 734 - Contribuinte individual – Transportador Cooperado que presta serviços por intermédio de cooperativa de trabalho
         WHEN PFUNC.CODCATEGORIAESOCIAL = 741 THEN '207' --MEI - Microempreendedor Individual, categoria e-Social 741 - Contribuinte individual - Microempreendedor Individual
         WHEN PFUNC.CODCATEGORIAESOCIAL = 901 THEN '004' --Estagiário, categoria e-Social 901 - Estagiário
+		ELSE PFUNC.CODCATEGORIAESOCIAL IS NULL THEN '001'
     END AS [Vínculo Empregatício],
     '' AS [Crachá],
     CASE
