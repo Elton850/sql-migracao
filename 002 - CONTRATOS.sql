@@ -33,29 +33,29 @@ SELECT
    	TB_UNIDADE.CODSEQ AS [Código da Unidade, cfe. Tabela de Unidades],
 	CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
     LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa, cfe. Tabela de Pessoas],
-    CASE
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 101 THEN '001' --CLT - Empregador Pessoa Jurídica, categoria e-Social 101 - Empregado – Geral, inclusive o empregado público da administração direta ou indireta contratado pela CLT
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 102 THEN '010' --Trabalhador Rural  - Prazo Lei 11.718/2008, categoria e-Social 101 -Empregado – Geral, inclusive o empregado público da administração direta ou indireta contratado pela CLT
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 103 THEN '002' --Aprendiz, categoria e-Social 103 - Empregado – Aprendiz
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 104 THEN '301' --Empregado(a) Doméstico(a), categoria e-Social 104 - Empregado- Doméstico 
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 105 THEN '007' --Trabalhador Temporário - Lei 9.601, categoria e-Social 105 - Empregado – contrato a termo firmado nos termos da Lei 9601/98
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 106 THEN '006' --Trabalhador Temporário - Lei 6.019, categoria e-Social 106 - Trabalhador Temporário - contrato nos termos da Lei 6.019/74
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 107 THEN '012' --Contrato de Trabalho Verde e Amarelo sem Multa FGTS Mensal, categoria e-Social 107 -Empregado - Contrato de trabalho Verde e Amarelo - sem acordo para antecipação mensal da multa rescisória do FGTS
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 108 THEN '013' --Contrato de Trabalho Verde e Amarelo com Multa FGTS Mensal, categoria e-Social 108 -Empregado - Contrato de trabalho Verde e Amarelo - com acordo para antecipação mensal da multa rescisória do FGTS
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 111 THEN '003' --Trabalhador Intermitente, categoria e-Social 111 - Empregado - Contrato de trabalho intermitente 
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 201 THEN '014' --Trabalhador Avulso Portuário, categoria e-Social 201 - Trabalhador Avulso Portuário
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 202 THEN '015' --Trabalhador Avulso Não Portuário, categoria e-Social 202 - Trabalhador Avulso Não Portuário
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 701 THEN '201' --Autônomo, categoria e-Social 701 - Contribuinte individual – Autônomo em geral, exceto se enquadrado em uma das demais categorias de contribuinte individual
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 711 THEN '203' --Freteiro - Passageiros, categoria e-Social 711 - Contribuinte individual – Transportador autônomo de passageiros
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 712 THEN '202' --Freteiro - Carga, categoria e-Social 712 - Contribuinte individual – Transportador autônomo de carga
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 721 THEN '104' --Diretor com FGTS - Não Sócio, categoria e-Social 721 - Contribuinte individual – Diretor não empregado, com FGTS
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 722 THEN '103' --Diretor sem FGTS - Não Sócio, categoria e-social 722 - Contribuinte individual – Diretor não empregado, sem FGTS
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 731 THEN '204' --Cooperado - Presta Serviços à Entidade.Beneficente, categoria e-Social 731 - Contribuinte individual – Cooperado que presta serviços por intermédio de Cooperativa de Trabalho
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 734 THEN '205' --Freteiro Cooperado - Presta Serviço Entidade Beneficente, categoria e-Social 734 - Contribuinte individual – Transportador Cooperado que presta serviços por intermédio de cooperativa de trabalho
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 741 THEN '207' --MEI - Microempreendedor Individual, categoria e-Social 741 - Contribuinte individual - Microempreendedor Individual
-        WHEN PFUNC.CODCATEGORIAESOCIAL = 901 THEN '004' --Estagiário, categoria e-Social 901 - Estagiário
-		ELSE PFUNC.CODCATEGORIAESOCIAL IS NULL THEN '001'
-    END AS [Vínculo Empregatício],
+	CASE
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 101 THEN '001'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 102 THEN '010'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 103 THEN '002'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 104 THEN '301'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 105 THEN '007'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 106 THEN '006'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 107 THEN '012'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 108 THEN '013'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 111 THEN '003'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 201 THEN '014'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 202 THEN '015'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 701 THEN '201'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 711 THEN '203'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 712 THEN '202'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 721 THEN '104'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 722 THEN '103'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 731 THEN '204'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 734 THEN '205'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 741 THEN '207'
+	    WHEN PFUNC.CODCATEGORIAESOCIAL = 901 THEN '004'
+	    ELSE '001'
+	END AS [Vínculo Empregatício],
     '' AS [Crachá],
     CASE
         WHEN PFUNC.DATADEMISSAO BETWEEN DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND EOMONTH(GETDATE()) THEN '3'
