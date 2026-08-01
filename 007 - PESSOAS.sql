@@ -5,9 +5,14 @@ WITH DEPENDENTES AS (
         NOME,
         GRAUPARENTESCO 
     FROM PFDEPEND
+),
+COLIGADAS AS (
+    SELECT '001' AS CODCOLIGADA
+    UNION ALL
+    SELECT '002'
 )
 SELECT DISTINCT
-    RIGHT('0000' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
+    COLIGADAS.CODCOLIGADA AS [Código da Empresa, cfe. Tabela de Empresas],
     LEFT(CAST(PPESSOA.CODIGO AS INTEGER), 8) AS [Código da Pessoa],
     LEFT(CAST(PPESSOA.NOME AS VARCHAR), 40) AS [Nome da Pessoa],
     LEFT(CASE
@@ -162,3 +167,4 @@ SELECT DISTINCT
     LEFT(CAST(PPESSOA.NOME AS VARCHAR), 70) AS [Nome Completo],
     FORMAT(PPESSOA.DTEMISSAOCNH, 'dd/MM/yyyy') AS [Data de Expedição da Carteira de Habilitação]
 FROM PPESSOA
+CROSS JOIN COLIGADAS
