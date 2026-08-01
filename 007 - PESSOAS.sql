@@ -5,28 +5,6 @@ WITH DEPENDENTES AS (
         NOME,
         GRAUPARENTESCO 
     FROM PFDEPEND
-),
-FUNCIONARIO_PRIORIZADO AS (
-    SELECT
-        PF.CODCOLIGADA,
-        PF.CHAPA,
-        PF.CODPESSOA,
-        ROW_NUMBER() OVER (
-            PARTITION BY LTRIM(RTRIM(CAST(P.CPF AS VARCHAR(20))))
-            ORDER BY
-                CASE 
-                    WHEN PF.CODTIPO <> 'A' THEN 0
-                    ELSE 1
-                END,
-                PF.DATAADMISSAO DESC,
-                PF.CODCOLIGADA DESC,
-                PF.CHAPA DESC
-        ) AS ORDEM
-    FROM PFUNC PF
-    INNER JOIN PPESSOA P
-        ON P.CODIGO = PF.CODPESSOA
-    WHERE P.CPF IS NOT NULL
-      AND LTRIM(RTRIM(CAST(P.CPF AS VARCHAR(20)))) <> ''
 )
 SELECT DISTINCT
     RIGHT('0000' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
@@ -184,22 +162,3 @@ SELECT DISTINCT
     LEFT(CAST(PPESSOA.NOME AS VARCHAR), 70) AS [Nome Completo],
     FORMAT(PPESSOA.DTEMISSAOCNH, 'dd/MM/yyyy') AS [Data de Expedição da Carteira de Habilitação]
 FROM PPESSOA
-INNER JOIN PFUNC
-    ON PFUNC.CODPESSOA = PPESSOA.CODIGO
-
-LEFT JOIN FUNCIONARIO_PRIORIZADO FP
-    ON FP.CODCOLIGADA = PFUNC.CODCOLIGADA
-   AND FP.CHAPA       = PFUNC.CHAPA
-   AND FP.CODPESSOA   = PFUNC.CODPESSOA
-   AND FP.ORDEM       = 1
-
-WHERE
-    FP.ORDEM = 1
-
-    OR (
-        PFUNC.CODTIPO <> 'A'
-        AND (
-            PPESSOA.CPF IS NULL
-            OR LTRIM(RTRIM(CAST(PPESSOA.CPF AS VARCHAR(20)))) = ''
-        )
-    )
