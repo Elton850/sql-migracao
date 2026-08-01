@@ -80,8 +80,8 @@ SELECT
         WHEN PFUNC.CODRECEBIMENTO = 'H' THEN '5' 
         ELSE LEFT(CAST(PFUNC.JORNADAMENSAL / 60 AS VARCHAR), 11) 
     END AS [Horas Contratuais, cfe. Tipo de Salário. Informar Horas/Mês nos contratos de Horistas (Tipo de Salário “5”).],
-    '' AS [Percentual de Insalubridade],
-    '' AS [Percentual de Periculosidade],
+    CASE WHEN PFCODFIX.CODEVENTO = '0108' THEN '0,20' ELSE '0,00' END AS [Percentual de Insalubridade],
+    CASE WHEN PFCODFIX.CODEVENTO = '0108' THEN '0,30' ELSE '0,00' END AS [Percentual de Periculosidade],
     '' AS [Nível de Exposição a Agente Nocivo],
     RIGHT('000' + LEFT(CAST(PFUNC.CODBANCOPAGTO AS INTEGER), 3), 3) AS [Número do Banco do Funcionário (Banco Central)],
     RIGHT('0000' + LEFT(CAST(REPLACE(REPLACE(PFUNC.CODAGENCIAPAGTO, '-',''),' ','') AS INTEGER), 4), 4) AS [Agencia Bancária do Funcionário],
@@ -145,4 +145,7 @@ LEFT JOIN TB_CARGOS
   AND TB_CARGOS.CBO                 = LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6)
 LEFT JOIN TB_UNIDADE
   ON TB_UNIDADE.CODIGO			    = CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(PFUNC.CODSECAO,'.','') AS VARCHAR)
+LEFT JOIN PFCODFIX
+  ON PFCODFIX.CODCOLIGADA            = PFUNC.CODCOLIGADA
+  AND PFCODFIX.CHAPA                 = PFUNC.CHAPA
 WHERE PFUNC.TIPODEMISSAO NOT IN ('5', '6')
