@@ -1,6 +1,48 @@
+WITH DADOS AS
+(
+    SELECT
+        PFUNC.CODCOLIGADA,
+        PFUNC.CHAPA,
+        PFUNC.CODPESSOA,
+        PFUNC.DATAADMISSAO,
+        PPESSOA.CODIGO,
+        PPESSOA.CPF
+    FROM PFUNC
+    INNER JOIN PPESSOA
+        ON PPESSOA.CODIGO = PFUNC.CODPESSOA
+    WHERE PFUNC.TIPODEMISSAO NOT IN ('5', '6')
+),
+DADOS2 AS
+(
+    SELECT
+        DADOS.*,
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY
+                DADOS.CODCOLIGADA,
+                DADOS.CODPESSOA
+            ORDER BY
+                DADOS.DATAADMISSAO DESC,
+                DADOS.CHAPA DESC
+        ) AS ORDEM
+    FROM DADOS
+),
+PESSOAS AS
+(
+    SELECT
+        CODCOLIGADA,
+        CHAPA,
+        CODPESSOA,
+        DATAADMISSAO,
+        CODIGO,
+        CPF
+    FROM DADOS2
+    WHERE ORDEM = 1
+)
+
 SELECT DISTINCT
     RIGHT('0000' + CAST(PFDEPEND.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
-    LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa],
+    LEFT(CAST(PESSOAS.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa],
     RIGHT('00' + LEFT(CAST(PFDEPEND.NRODEPEND AS INTEGER), 2), 2) AS [Familiar (Número Sequencial), iniciando em “01” a cada Pessoa],
     LEFT(CAST(PFDEPEND.NOME AS VARCHAR), 40) AS [Nome do Familiar],
     FORMAT(PFDEPEND.DTNASCIMENTO, 'dd/MM/yyyy') AS [Data de Nascimento],
@@ -62,9 +104,7 @@ END AS [Grau de Dependência],
     '' AS [Número do Cartão do SUS],
     '' AS [Nome Completo do Familiar]
 FROM PFDEPEND
-INNER JOIN PFUNC
-  ON PFUNC.CODCOLIGADA      = PFDEPEND.CODCOLIGADA
-  AND PFUNC.CHAPA           = PFDEPEND.CHAPA
-INNER JOIN PPESSOA
-  ON PFUNC.CODPESSOA        = PPESSOA.CODIGO
+INNER JOIN PESSOAS
+  ON PESSOAS.CODCOLIGADA = PFDEPEND.CODCOLIGADA
+  AND PESSOAS.CHAPA = PFDEPEND.CHAPA
 WHERE PFDEPEND.NOME IS NOT NULL
