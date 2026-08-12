@@ -30,7 +30,7 @@ SELECT
     FORMAT(PFFINANC.DTPAGTO, 'dd/MM/yyyy') AS [Data de Pagamento da Folha de Pagamento],
     '0' AS [Tipo de Informação],
     '0' AS [Horas, Dias ou Quantidade, cfe. Tipo de Informação],
-    LEFT(CAST(PFFINANC.VALOR AS DECIMAL(15,2)), 15) AS [Valor],
+    LEFT(REPLACE(CAST(PFFINANC.VALOR AS DECIMAL(15,2)), '.', ','), 15) AS [Valor],
     '' AS [Identificador atribuído pela fonte pagadora para o demonstrativo de valores devidos ao trabalhador, gerado no eSocial.],
     '' AS [Número do recibo do arquivo que contém as informações da rescisão contratual que originou o pagamento, gerado no eSocial.]
 FROM PFFINANC

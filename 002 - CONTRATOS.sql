@@ -65,7 +65,7 @@ CONTRATOS AS (
             WHEN PFUNC.CODRECEBIMENTO LIKE 'O' THEN '7'
             WHEN PFUNC.CODRECEBIMENTO LIKE 'Q' THEN '2'
         END AS [Tipo de Salário],
-        LEFT(CAST(PFUNC.SALARIO AS VARCHAR), 11) AS [Salário Contratual, cfe. Tipo de Salário],
+        LEFT(REPLACE(CAST(PFUNC.SALARIO AS VARCHAR), '.', ','), 11) AS [Salário Contratual, cfe. Tipo de Salário],
         CASE
             WHEN PFUNC.CODRECEBIMENTO = 'H' THEN '5' 
             ELSE LEFT(CAST(PFUNC.JORNADAMENSAL / 60 AS VARCHAR), 11) 
