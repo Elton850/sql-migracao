@@ -4,7 +4,7 @@ WITH TB_CARGOS AS (
 		'00000000' + CAST(ROW_NUMBER() OVER(ORDER BY CARGO) AS VARCHAR), 8
 	) AS CODIGO,
 	CARGOS.*
-FROM (	
+FROM (
 	SELECT DISTINCT
 		LEFT(TRANSLATE(
 			CAST(PFUNCAO.NOME AS VARCHAR),
@@ -15,11 +15,60 @@ FROM (
 	FROM PFUNCAO
     ) CARGOS
 ),
+DADOS AS
+(
+    SELECT
+        PFUNC.CODCOLIGADA,
+        PFUNC.CHAPA,
+        PFUNC.CODPESSOA,
+        PFUNC.DATAADMISSAO,
+        PPESSOA.CODIGO,
+        PPESSOA.CPF
+    FROM PFUNC
+    INNER JOIN PPESSOA
+        ON PPESSOA.CODIGO = PFUNC.CODPESSOA
+    WHERE PFUNC.TIPODEMISSAO NOT IN ('5', '6')
+),
+DADOS2 AS
+(
+    SELECT
+        DADOS.*,
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY
+                DADOS.CODCOLIGADA,
+                DADOS.CODPESSOA
+            ORDER BY
+                DADOS.DATAADMISSAO DESC,
+                DADOS.CHAPA DESC
+        ) AS ORDEM
+    FROM DADOS
+),
+PESSOAS AS
+(
+    SELECT
+        CODCOLIGADA,
+        CHAPA,
+        CODPESSOA,
+        DATAADMISSAO,
+        CODIGO,
+        CPF
+    FROM DADOS2
+    WHERE ORDEM = 1
+),
 CONTRATOS AS (
     SELECT
         RIGHT('0000' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 4) AS [Código da Empresa, cfe. Tabela de Empresas],
-        RIGHT('00' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 2) + RIGHT('00' + CAST(PFUNC.CODFILIAL AS VARCHAR), 2) AS [Código do Estabelecimento Atual, cfe. Tabela de Estabelecimentos],
-        RIGHT('00' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 2) + RIGHT('00' + CAST(PFUNC.CODFILIAL AS VARCHAR), 2) AS [Código da Unidade, cfe. Tabela de Unidades],
+        CASE
+            WHEN PFUNC.CODCOLIGADA <> 1 
+            THEN RIGHT('00' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 2) + RIGHT('00' + CAST(PFUNC.CODFILIAL AS VARCHAR), 2) 
+            ELSE RIGHT('0000' + CAST(PFUNC.CODFILIAL AS VARCHAR), 4)
+        END AS [Código do Estabelecimento Atual, cfe. Tabela de Estabelecimentos],
+        CASE
+            WHEN PFUNC.CODCOLIGADA <> 1 
+            THEN RIGHT('00' + CAST(PFUNC.CODCOLIGADA AS VARCHAR), 2) + RIGHT('00' + CAST(PFUNC.CODFILIAL AS VARCHAR), 2) 
+            ELSE RIGHT('0000' + CAST(PFUNC.CODFILIAL AS VARCHAR), 4)
+        END AS [Código da Unidade, cfe. Tabela de Unidades],
         CAST(PFUNC.CODCOLIGADA AS VARCHAR) + RIGHT(PFUNC.CHAPA, 8 - LEN(CAST(PFUNC.CODCOLIGADA AS VARCHAR))) AS [Código do Contrato],
         LEFT(CAST(PFUNC.CODPESSOA AS INTEGER), 8) AS [Código da Pessoa, cfe. Tabela de Pessoas],
         CASE
@@ -133,11 +182,12 @@ CONTRATOS AS (
                                             'AAAAAEEEEIIIIOOOOOUUUUCaaaaaeeeeiiiiooooouuuuc'
                                         ), 40)
     AND TB_CARGOS.CBO                 = LEFT(CAST(REPLACE(REPLACE(ISNULL(PFUNCAO.CBO2002, PFUNCAO.CBO),'-',''),' ','') AS VARCHAR), 6)
-    LEFT JOIN TB_UNIDADE
-    ON TB_UNIDADE.CODIGO			    = CAST(PFUNC.CODCOLIGADA AS VARCHAR) + CAST(REPLACE(PFUNC.CODSECAO,'.','') AS VARCHAR)
     LEFT JOIN PFCODFIX
     ON PFCODFIX.CODCOLIGADA            = PFUNC.CODCOLIGADA
     AND PFCODFIX.CHAPA                 = PFUNC.CHAPA
+	INNER JOIN PESSOAS
+	  ON PESSOAS.CODCOLIGADA = PFUNC.CODCOLIGADA
+	  AND PESSOAS.CHAPA = PFUNC.CHAPA
 )
 
 SELECT DISTINCT * FROM CONTRATOS
