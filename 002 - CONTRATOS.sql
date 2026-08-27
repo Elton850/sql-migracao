@@ -4,7 +4,7 @@ WITH TB_CARGOS AS (
 		'00000000' + CAST(ROW_NUMBER() OVER(ORDER BY CARGO) AS VARCHAR), 8
 	) AS CODIGO,
 	CARGOS.*
-FROM (
+FROM (	
 	SELECT DISTINCT
 		LEFT(TRANSLATE(
 			CAST(PFUNCAO.NOME AS VARCHAR),
@@ -22,12 +22,14 @@ DADOS AS
         PFUNC.CHAPA,
         PFUNC.CODPESSOA,
         PFUNC.DATAADMISSAO,
+        PFUNC.DATADEMISSAO,
         PPESSOA.CODIGO,
         PPESSOA.CPF
     FROM PFUNC
     INNER JOIN PPESSOA
         ON PPESSOA.CODIGO = PFUNC.CODPESSOA
     WHERE PFUNC.TIPODEMISSAO NOT IN ('5', '6')
+       OR PFUNC.TIPODEMISSAO IS NULL
 ),
 DADOS2 AS
 (
@@ -39,22 +41,28 @@ DADOS2 AS
                 DADOS.CODCOLIGADA,
                 DADOS.CODPESSOA
             ORDER BY
+                CASE 
+                    WHEN DADOS.DATADEMISSAO IS NULL THEN 0
+                    ELSE 1
+                END,
                 DADOS.DATAADMISSAO DESC,
+                DADOS.DATADEMISSAO DESC,
                 DADOS.CHAPA DESC
         ) AS ORDEM
     FROM DADOS
 ),
-PESSOAS AS
-(
-    SELECT
-        CODCOLIGADA,
-        CHAPA,
-        CODPESSOA,
-        DATAADMISSAO,
-        CODIGO,
-        CPF
-    FROM DADOS2
-    WHERE ORDEM = 1
+PESSOAS AS (
+	SELECT
+	    CODCOLIGADA,
+	    CHAPA,
+	    CODPESSOA,
+	    DATAADMISSAO,
+	    DATADEMISSAO,
+	    CODIGO,
+	    CPF,
+	    ORDEM
+	FROM DADOS2
+	WHERE ORDEM = 1
 ),
 CONTRATOS AS (
     SELECT
@@ -96,16 +104,49 @@ CONTRATOS AS (
         END AS [Vínculo Empregatício],
         '' AS [Crachá],
         CASE
-            WHEN PFUNC.DATADEMISSAO BETWEEN DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND EOMONTH(GETDATE()) AND PFUNC.CODSITUACAO = 'D' THEN '3'
-            WHEN PFUNC.DATADEMISSAO < DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND PFUNC.CODSITUACAO = 'D' THEN '4'
-            WHEN PFUNC.DATADEMISSAO IS NULL AND PFUNC.CODSITUACAO = 'D' THEN '4'
-            WHEN PFUNC.CODSITUACAO IN ('E','L','P','T','W','Y','I') THEN '2'
             WHEN PFUNC.CODSITUACAO IN ('A', 'Z', 'F', 'V') THEN '1'
+            WHEN PFUNC.CODSITUACAO IN ('E','L','P','T','W','Y','I','Q') THEN '2'
+            WHEN PFUNC.DATADEMISSAO IS NULL AND PFUNC.CODSITUACAO = 'D' THEN '4'
+            WHEN PFUNC.DATADEMISSAO < DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND PFUNC.CODSITUACAO = 'D' THEN '4'
+            WHEN PFUNC.DATADEMISSAO BETWEEN DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND EOMONTH(GETDATE()) AND PFUNC.CODSITUACAO = 'D' THEN '3'
         END AS [Situação],
         '' AS [Causa Afastamento],
         '' AS [Dt.Último Afastamento],
         '' AS [Dt.Último Retorno],
-        '' AS [Causa Rescisão],
+        CASE
+            WHEN PFUNC.TIPODEMISSAO = '1' THEN '1' --Demissão com Justa Causa
+            WHEN PFUNC.TIPODEMISSAO = '2' THEN '2' --Demissão sem Justa Causa
+            WHEN PFUNC.TIPODEMISSAO = '3' THEN '3' --Pedido de Demissão sem Justa Causa
+            WHEN PFUNC.TIPODEMISSAO = '4' THEN '4' --Pedido de Demissão sem Justa Causa
+            WHEN PFUNC.TIPODEMISSAO = '5' THEN '6' --Transferência de Estab. s/Ônus p/Cedente
+            WHEN PFUNC.TIPODEMISSAO = '6' THEN '6' --Transferência de Estab. c/Ônus p/Cedente
+            WHEN PFUNC.TIPODEMISSAO = '7' THEN '9' --Outros Motivos de Rescisão
+            WHEN PFUNC.TIPODEMISSAO = '8' THEN '8' --Falecimento
+            WHEN PFUNC.TIPODEMISSAO = '9' THEN '9' --Outros Motivos de Rescisão
+            WHEN PFUNC.TIPODEMISSAO = 'A' THEN '7' --Aposentadoria p/Invalidez Dec.Acid.Trab.
+            WHEN PFUNC.TIPODEMISSAO = 'B' THEN '9' --Rescisão determinada pela Justiça
+            WHEN PFUNC.TIPODEMISSAO = 'C' THEN '9' --Rescisão por Culpa Recíproca
+            WHEN PFUNC.TIPODEMISSAO = 'D' THEN '7' --Aposentadoria p/Invalidez Dec.Doença Pr.
+            WHEN PFUNC.TIPODEMISSAO = 'E' THEN '7' --Aposentadoria Especial
+            WHEN PFUNC.TIPODEMISSAO = 'F' THEN '8' --Falecimento Decorr. de Acidente do Trab.
+            WHEN PFUNC.TIPODEMISSAO = 'G' THEN '9' --Outros Motivos de Rescisão
+            WHEN PFUNC.TIPODEMISSAO = 'H' THEN '9' --Outros Motivos de Rescisão
+            WHEN PFUNC.TIPODEMISSAO = 'I' THEN '7' --Aposentadoria por Idade
+            WHEN PFUNC.TIPODEMISSAO = 'J' THEN '7' --Aposentadoria por Idade
+            WHEN PFUNC.TIPODEMISSAO = 'M' THEN '9' --Mudança de Regime Trabalhista
+            WHEN PFUNC.TIPODEMISSAO = 'N' THEN '9' --Rescisão por Dispensa Indireta
+            WHEN PFUNC.TIPODEMISSAO = 'O' THEN '7' --Aposentadoria por Invalidez
+            WHEN PFUNC.TIPODEMISSAO = 'P' THEN '8' --Falecimento Decorr. de Doença Profiss.
+            WHEN PFUNC.TIPODEMISSAO = 'R' THEN '7' --Aposentadoria por Tempo de Serviço
+            WHEN PFUNC.TIPODEMISSAO = 'S' THEN '7' --Aposentadoria por Tempo de Serviço
+            WHEN PFUNC.TIPODEMISSAO = 'T' THEN '5' --Rescisão por Término do Contrato por Prazo Determinado
+            WHEN PFUNC.TIPODEMISSAO = 'U' THEN '7' --Aposentadoria Compulsória
+            WHEN PFUNC.TIPODEMISSAO = 'V' THEN '9' --Rescisão por Acordo entre Partes
+            WHEN PFUNC.TIPODEMISSAO = 'W' THEN '9' --Outros Motivos de Rescisão
+            WHEN PFUNC.TIPODEMISSAO = 'X' THEN '9' --Outros Motivos de Rescisão
+            ELSE '9'
+        END AS [Causa Rescisão],
+       
         FORMAT(PFUNC.DATAADMISSAO, 'dd/MM/yyyy') AS [Data de Admissão],
         CASE
             WHEN PFUNC.CODRECEBIMENTO LIKE 'M' THEN '1'
@@ -168,7 +209,7 @@ CONTRATOS AS (
             WHEN PFUNC.TIPODEMISSAO = 'S' THEN '030' --Aposentadoria por Tempo de Serviço
             WHEN PFUNC.TIPODEMISSAO = 'T' THEN '005' --Rescisão por Término do Contrato por Prazo Determinado
             WHEN PFUNC.TIPODEMISSAO = 'U' THEN '035' --Aposentadoria Compulsória
-            WHEN PFUNC.TIPODEMISSAO = 'V' THEN '016' --Rescisão por Acordo entre as Partes
+            WHEN PFUNC.TIPODEMISSAO = 'V' THEN '016' --Rescisão por Acordo entre Partes
             WHEN PFUNC.TIPODEMISSAO = 'W' THEN '9999' --Outros Motivos de Rescisão
             WHEN PFUNC.TIPODEMISSAO = 'X' THEN '9999' --Outros Motivos de Rescisão
         END AS [Motivo de Rescisão Darwin]
