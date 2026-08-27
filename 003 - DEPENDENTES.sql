@@ -5,12 +5,14 @@ WITH DADOS AS
         PFUNC.CHAPA,
         PFUNC.CODPESSOA,
         PFUNC.DATAADMISSAO,
+        PFUNC.DATADEMISSAO,
         PPESSOA.CODIGO,
         PPESSOA.CPF
     FROM PFUNC
     INNER JOIN PPESSOA
         ON PPESSOA.CODIGO = PFUNC.CODPESSOA
     WHERE PFUNC.TIPODEMISSAO NOT IN ('5', '6')
+       OR PFUNC.TIPODEMISSAO IS NULL
 ),
 DADOS2 AS
 (
@@ -22,22 +24,28 @@ DADOS2 AS
                 DADOS.CODCOLIGADA,
                 DADOS.CODPESSOA
             ORDER BY
+                CASE 
+                    WHEN DADOS.DATADEMISSAO IS NULL THEN 0
+                    ELSE 1
+                END,
                 DADOS.DATAADMISSAO DESC,
+                DADOS.DATADEMISSAO DESC,
                 DADOS.CHAPA DESC
         ) AS ORDEM
     FROM DADOS
 ),
-PESSOAS AS
-(
-    SELECT
-        CODCOLIGADA,
-        CHAPA,
-        CODPESSOA,
-        DATAADMISSAO,
-        CODIGO,
-        CPF
-    FROM DADOS2
-    WHERE ORDEM = 1
+PESSOAS AS (
+	SELECT
+	    CODCOLIGADA,
+	    CHAPA,
+	    CODPESSOA,
+	    DATAADMISSAO,
+	    DATADEMISSAO,
+	    CODIGO,
+	    CPF,
+	    ORDEM
+	FROM DADOS2
+	WHERE ORDEM = 1
 )
 
 SELECT DISTINCT
